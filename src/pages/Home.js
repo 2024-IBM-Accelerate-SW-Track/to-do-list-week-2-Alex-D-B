@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Todos from "../component/todos";
 import AddTodo from "../component/AddTodo";
+import UpdateTodo from "../component/UpdateTodo";
 import "../pages/Home.css";
 
 class Home extends Component {
@@ -38,6 +39,19 @@ class Home extends Component {
       todos: todos,
     });
   };
+
+  updateTodo = (oldContent, newContent) => {
+    const newState = this.state.todos.map((todo) => {
+      if (oldContent === todo.content) {
+        todo.content = newContent;
+      }
+      return todo;
+    });
+    this.setState({todos: newState});
+  }
+  removeAll = () => {
+    this.setState({todos: []})
+  }
   render() {
     return (
       <div className="Home">
@@ -45,6 +59,7 @@ class Home extends Component {
         {/* When passing the AddTodo component, addTodo is a prop that is used in the 
         AddTodo.js file when handling the submit */}
         <AddTodo addTodo={this.addTodo} />
+        <UpdateTodo updateTodoFunc={this.updateTodo} removeAllFunc={this.removeAll} />
         {/* When returning the Todos component, todos is a prop passed to the todos.js file
          to format and render the current todo list state */}
         <Todos todos={this.state.todos} deleteTodo={this.deleteTodo} />
