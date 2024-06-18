@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Todos from "../component/todos";
 import AddTodo from "../component/AddTodo";
+import UpdateTodo from "../component/UpdateTodo";
 import "../pages/Home.css";
 
 class Home extends Component {
@@ -14,6 +15,9 @@ class Home extends Component {
   // the addTodo function simply creates a new array that includes the user submitted todo item and then
   // updates the state with the new list.
   addTodo = (todo) => {
+    if (this.state.todos.find((existing) => existing.content === todo.content)) {
+      return;
+    }
     // In React, keys or ids in a list help identify which items have changed, been added or removed. Keys
     // should not share duplicate values.
     // To avoid having dup values, we use the Math.random() function to generate a random value for a todo id.
@@ -27,6 +31,27 @@ class Home extends Component {
       todos: new_list,
     });
   };
+  deleteTodo = (id) => {
+    const todos = this.state.todos.filter((todo) => {
+      return todo.id !== id;
+    });
+    this.setState({
+      todos: todos,
+    });
+  };
+
+  updateTodo = (oldContent, newContent) => {
+    const newState = this.state.todos.map((todo) => {
+      if (oldContent === todo.content) {
+        todo.content = newContent;
+      }
+      return todo;
+    });
+    this.setState({todos: newState});
+  }
+  removeAll = () => {
+    this.setState({todos: []})
+  }
   render() {
     return (
       <div className="Home">
@@ -34,9 +59,10 @@ class Home extends Component {
         {/* When passing the AddTodo component, addTodo is a prop that is used in the 
         AddTodo.js file when handling the submit */}
         <AddTodo addTodo={this.addTodo} />
+        <UpdateTodo updateTodoFunc={this.updateTodo} removeAllFunc={this.removeAll} />
         {/* When returning the Todos component, todos is a prop passed to the todos.js file
          to format and render the current todo list state */}
-        <Todos todos={this.state.todos} />
+        <Todos todos={this.state.todos} deleteTodo={this.deleteTodo} />
       </div>
     );
   }
